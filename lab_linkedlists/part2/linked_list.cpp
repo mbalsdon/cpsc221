@@ -138,11 +138,13 @@ void insert_after(Node* head, int oldKey, int newKey){
 Node* interleave(Node* list1, Node* list2){
   // make new list and add to it by back-and-forth iteration (while + switch/boolean) across both lists (until null)
 
-  Node * weavedList;
+  Node * weavedList = NULL;
   Node * weavedListIndex;
   Node * toAdd;
   // case false: we take from list1 --- case true: we take from list2
   bool swappie;
+
+  if (list1 == NULL && list2 == NULL) return weavedList;
 
   // initializing weavedListIndex by manually adding first node to weaved list
   if (list1 != NULL) {
@@ -157,16 +159,20 @@ Node* interleave(Node* list1, Node* list2){
     list1 = list1->next;
     // since we took from list1, while loop will begin with list2
     if (list2 != NULL) {
-    swappie = true;
+      swappie = true;
+    } else {
+      swappie = false;
     }
   } else if (list2 != NULL) {
     toAdd = new Node();
-    toAdd->key = list1->key;
+    toAdd->key = list2->key;
     weavedList = toAdd;
     weavedListIndex = toAdd;
     list2 = list2->next;
     if (list1 != NULL) {
-    swappie = false;
+      swappie = false;
+    } else {
+      swappie = true;
     }
   }
 
