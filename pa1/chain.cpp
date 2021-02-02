@@ -25,7 +25,32 @@ Chain::~Chain() {
  * @param ndata = The data to be inserted.
  */
 Chain::Node * Chain::insertAfter(Node * p, const Block &ndata) {
-  /* your code here */
+  
+  // case 1: p is NULL -- add new head node to chain
+  if (p == NULL) {
+    head_ = new Node(ndata);
+    p = head_;
+
+    length_ += 1;
+    return p;
+  // case 2: p is last element of list -- add new last element
+  } else if (p->next == NULL) {
+    p->next = new Node(ndata);
+    p->next->prev = p;
+
+    length_ += 1;
+    return p->next;
+  // case 3: p is not last elmt of list -- insert between elmts
+  } else {
+    p->next->prev = new Node(ndata);
+    p->next->prev->prev = p;
+    p->next->prev->next = p->next;
+    p->next = p->next->prev;
+
+    length_ += 1;
+    return p->next;
+  }
+
 }
 
 /**
