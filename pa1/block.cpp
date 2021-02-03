@@ -17,9 +17,9 @@ void Block::render(PNG &im, int x) const {
     vector<HSLAPixel> column = block.back();
     block.pop_back();
     // draw pixels from column (bottom to top)
-    for (int y = im.height()-1; y < -1; y--) {
+    for (int y = im.height()-1; y > -1; y--) {
       // put a pixel from column on img
-      *im.getPixel(i, y) = column.back();
+      *(im.getPixel(i, y)) = column.back();
       column.pop_back();
     }
   }
@@ -36,4 +36,24 @@ void Block::build(PNG &im, int x, int width) {
   }
   data.push_back(column);
   }
+
+  // cout test -- everything seems to be in order
+  // vector<vector<HSLAPixel>> testBlock = data;
+
+  // for (unsigned a = 0; a < data.size(); a++) {
+  //   cout << "--- a = " << a << " ---" << endl;
+
+  //   vector<HSLAPixel> testColumn = testBlock.back();
+  //   testBlock.pop_back();
+
+  //   for (unsigned b = 0; b < data.back().size(); b++) {
+  //     HSLAPixel testPixel = testColumn.back();
+  //     testColumn.pop_back();
+
+  //     cout << "b = " << b << " || ";
+  //     cout << testPixel.h << " " << testPixel.s << " ";
+  //     cout << testPixel.l << " " << testPixel.a << endl;
+  //   }
+  // }
+
 }
