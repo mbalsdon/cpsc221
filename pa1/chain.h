@@ -60,6 +60,7 @@ class Chain {
    
   void unscramble();
 
+
   /* =============== end of public PA1 FUNCTIONS =========================*/
 
  private:
