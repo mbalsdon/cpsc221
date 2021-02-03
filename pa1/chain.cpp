@@ -60,7 +60,63 @@ Chain::Node * Chain::insertAfter(Node * p, const Block &ndata) {
  * Change the chain's head pointer if necessary.
  */
 void Chain::swap(Node *p, Node *q) {
-  /* your code here */
+  Node * origPNext = p->next;
+  Node * origQPrev = q->prev;
+  if (p == NULL || q == NULL) return;
+  if (p == q) return;
+
+  // run the list to see if p or q is first
+  // if q is first, swap the pointers so that p is first
+  Node * first = head_;
+  while (first != NULL) {
+    if (first == p) {
+      break;
+    } else if (first == q) {
+      first = q;
+      q = p;
+      p = first;
+      break;
+    }
+    first = first->next;
+  }
+
+  // we can now safely assume p comes before q in the list
+  
+  // first we deal with things to the left of p and right of q, as these do not depend
+  // on if p and q are adjacent.
+
+  // p is the first elmt in the list
+  if (p->prev == NULL) {
+    q->prev = NULL;
+    head_ = q;
+  // p is not the first elmt in the list
+  } else {
+    q->prev = p->prev;
+    q->prev->next = q;
+  }
+  // q is the last elmt in the list
+  if (q->next == NULL) {
+    p->next = NULL;
+  // q is not the last elmt in the list
+  } else {
+    p->next = q->next;
+    p->next->prev = p;
+  }
+
+  // we now deal with the right of p and left of q, which depend on adjacency
+
+  // p and q are adjacent
+  if (p->next == q) {
+    p->prev = q;
+    q->next = p;
+  // p and q are not adjacent (1+ node between)
+  } else {
+    origPNext->prev = q;
+    origQPrev->next = p;
+    p->prev = origQPrev;
+    q->next = origPNext;
+  }
+  // yes, this can be done in O(1) time (if you want to give yourself an aneurysm)
 }
 
 /**
