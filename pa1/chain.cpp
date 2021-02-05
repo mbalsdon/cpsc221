@@ -153,5 +153,51 @@ void Chain::copy(Chain const &other) {
  *    then repeat to unscramble the chain/image.
  */
 void Chain::unscramble() {
-  /* your code here */
+
+  // one long list; already unscrambled
+  if (head_->next == NULL) return;
+
+  double maxDist = 0;
+  Node * leftNode;
+  Node * rightNode = head_;
+  Node * contender;
+
+  // run every node against every other node,
+  // find the one with greatest cumulative distance (left piece)
+  while (rightNode != NULL) {
+    leftNode = head_;
+    double sumDist = 0;
+    while (leftNode != NULL) {
+      if (leftNode != rightNode) {
+        // accumulate rightNode's dist against every other node
+        sumDist = sumDist + leftNode->data.distanceTo(rightNode->data);
+      }
+      leftNode = leftNode->next;
+    } // end inner while
+    // store the node with highest cumulative distance
+    if (sumDist > maxDist) {
+      maxDist = sumDist;
+      contender = rightNode;
+    }
+    rightNode = rightNode->next;
+    } // end outer while
+
+// if victor is at back of list
+if (contender->next == NULL) {
+  contender->prev->next = NULL;
+  contender->next = head_;
+  contender->prev = NULL;
+  head_->prev = contender;
+  head_ = contender;
+}
+// if victor is not at front
+if (contender->prev != NULL) {
+  contender->prev->next = contender->next;
+  contender->next->prev = contender->prev;
+  contender->prev = NULL;
+  head_->prev = contender;
+  contender->next = head_;
+  head_ = contender;
+  }
+
 }
