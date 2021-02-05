@@ -154,7 +154,7 @@ void Chain::copy(Chain const &other) {
  */
 void Chain::unscramble() {
 
-  // one long list; already unscrambled
+  // one-long list; already unscrambled
   if (head_->next == NULL) return;
 
   double maxDist = 0;
@@ -173,31 +173,60 @@ void Chain::unscramble() {
         sumDist = sumDist + leftNode->data.distanceTo(rightNode->data);
       }
       leftNode = leftNode->next;
-    } // end inner while
+    } // end inner loop
     // store the node with highest cumulative distance
     if (sumDist > maxDist) {
       maxDist = sumDist;
       contender = rightNode;
     }
     rightNode = rightNode->next;
-    } // end outer while
+    } // end outer loop
 
-// if victor is at back of list
-if (contender->next == NULL) {
-  contender->prev->next = NULL;
-  contender->next = head_;
-  contender->prev = NULL;
-  head_->prev = contender;
-  head_ = contender;
-}
-// if victor is not at front
-if (contender->prev != NULL) {
-  contender->prev->next = contender->next;
-  contender->next->prev = contender->prev;
-  contender->prev = NULL;
-  head_->prev = contender;
-  contender->next = head_;
-  head_ = contender;
-  }
+  // if victor is at back of list
+  if (contender->next == NULL) {
+    contender->prev->next = NULL;
+    contender->next = head_;
+    contender->prev = NULL;
+    head_->prev = contender;
+    head_ = contender;
+    }
+  // if victor is not at front
+  if (contender->prev != NULL) {
+    contender->prev->next = contender->next;
+    contender->next->prev = contender->prev;
+    contender->prev = NULL;
+    head_->prev = contender;
+    contender->next = head_;
+    head_ = contender;
+    }
+    
+  // putting da rest in place... same idea as above
+
+  // two-long list; already unscrambled
+  if (head_->next->next == NULL) return;
+
+  Node * index = head_;
+  Node * other = head_->next;
+  Node * indexNext;
+  Node * contenderTwo;
+
+  while (index->next != NULL) {
+    other = index->next;
+    double dist = 0;
+    double min = 1000;
+    // compare index block with other blocks, store min distance
+    while (other != NULL) {
+      dist = index->data.distanceTo(other->data);
+      if (dist < min) {
+        min = dist;
+        contenderTwo = other;
+      }
+      other = other->next;
+    } // end inner loop
+    // set min distance block to come after index
+    indexNext = index->next;
+    swap(indexNext, contenderTwo);
+    index = index->next;
+  } // end outer loop
 
 }
