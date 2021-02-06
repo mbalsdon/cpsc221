@@ -141,7 +141,7 @@ void Chain::clear() {
       index = index->next;
     }
   } // end loop
-
+  length_ = 0;
 }
 
 /**
