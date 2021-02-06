@@ -27,48 +27,35 @@ int main() {
    * kh.png.  Why not?
    */
   PNG im;
-  im.readFromFile("images/kh.png");
+  //im.readFromFile("images/kh.png");
   //im.readFromFile("images/terrain.png");
   //im.readFromFile("images/ronMueck.png");
-  //im.readFromFile("images/sun.png");
+  im.readFromFile("images/sun.png");
 
-  Chain c(im, 5); //
+  Chain c(im, 15);
   // randomly scramble the blocks.
-  // c.scramble();
+  c.scramble();
   // or test swapping a few blocks
+  //  c.testSwap(3,4); // swap the 3rd and 4th blocks.
+  //  c.testSwap(0,1);
+  //  c.testSwap(1,0);
+  //  c.testSwap(0,4);
+  // c.testSwap(5,0);
+  // c.testSwap(0,0);
+  // c.testSwap(0,3);
+  // c.testSwap(4,0);
+  // c.testSwap(2,3);
+  // c.testSwap(4,2);
+  // c.testSwap(1,4);
 
-  // c.testSwap(5,5); // works
-  c.testSwap(5,0); // works
-  c.testSwap(0,0); // works
+  // Chain b = c;
+  // b.render().writeToFile("images/testcopy.png");
 
-  // c.testSwap(0,1); // works
-  // c.testSwap(0,2); // works
-  c.testSwap(0,3); // works
-  // c.testSwap(0,4); // works
-
-  // c.testSwap(1,0); // :)
-  // c.testSwap(2,0); // works
-  c.testSwap(3,0); // works
-  // c.testSwap(4,0); // works
-
-  // c.testSwap(1,2); // works!!
-  // c.testSwap(2,1); // im licherally pogging out of my chair rn
-  c.testSwap(2,3); // its all coming together
-  // c.testSwap(3,2); // MASSIVE ALGORITHM LEGEND?????
-  // c.testSwap(3,4); // works
-
-  // c.testSwap(4,1); // works
-  c.testSwap(4,2); // works
-  // c.testSwap(4,3); // works
-
-  c.testSwap(1,4); // works
-  // c.testSwap(2,4); // works
-
-  c.render().writeToFile("images/scram.png"); // look at scram.png to debug
+  c.render().writeToFile("images/scram.png");  // look at scram.png to debug
 
   // test unscramble()
-  // c.unscramble(); //
-  // c.render().writeToFile("images/unscram.png");// look at unscram.png also
+  c.unscramble();
+  c.render().writeToFile("images/unscram.png");// look at unscram.png also
 
   /* Check that unscramble works to unscramble a *saved* image too.
   PNG om;
@@ -79,3 +66,4 @@ int main() {
   */
   return 0;
 }
+
