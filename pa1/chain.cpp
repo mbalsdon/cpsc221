@@ -10,7 +10,8 @@
  * memory does not leak on destruction of a chain.
  */
 Chain::~Chain() {
-  /* your code here */
+
+  clear();
 }
 
 /**
@@ -114,7 +115,7 @@ void Chain::swap(Node *p, Node *q) {
     p->prev = origQPrev;
     q->next = origPNext;
   }
-  // yes, this can be done in O(1) time (if you want to give yourself an aneurysm)
+  // yes, this can be done in constant time (if you want to give yourself an aneurysm)
 }
 
 /**
@@ -122,7 +123,25 @@ void Chain::swap(Node *p, Node *q) {
  * current Chain class.
  */
 void Chain::clear() {
-  /* your code here */
+  
+  if (head_ == NULL) return;
+  // index always one ahead of whats deleted (until last node)
+  Node * index = head_->next;
+  while (index != NULL) {
+    // delete guy behind
+    index->prev->next = NULL;
+    delete index->prev;
+    index->prev = NULL;
+    // index is/isnt last element in list
+    if (index->next == NULL) {
+      delete index;
+      index = NULL;
+      head_ = NULL;
+    } else {
+      index = index->next;
+    }
+  } // end loop
+
 }
 
 /**
@@ -133,7 +152,30 @@ void Chain::clear() {
  * constructor and the assignment operator for Chains.
  */
 void Chain::copy(Chain const &other) {
-  /* your code here */
+
+  Node * indexOld = other.head_;
+  
+  if (indexOld == NULL) return;
+  // 1-long chain
+  if (indexOld->next == NULL) {
+    head_ = new Node(indexOld->data);
+    length_++;
+  } else {
+    // indexOld is always "one ahead" of indexNew
+    head_ = new Node(indexOld->data);
+    indexOld = indexOld->next;
+    length_++;
+    Node * indexNew = head_;
+    // run the list, copy the data
+    while (indexOld != NULL) {
+      indexNew->next = new Node(indexOld->data);
+      length_++;
+      indexNew->next->prev = indexNew;
+
+      indexNew = indexNew->next;
+      indexOld = indexOld->next;
+    }
+  }
 }
 
 /* Modifies the current chain: 
