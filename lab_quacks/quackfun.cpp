@@ -25,10 +25,15 @@ namespace QuackFun {
     template <typename T>
     T sum(stack<T>& s)
     {
-        // Your code here
-        return T(); // stub return value (0 for primitive types). Change this!
-                    // Note: T() is the default value for objects, and 0 for
-                    // primitive types
+        if (s.empty()) {
+            return T();
+        }
+
+        T top = s.top();
+        s.pop();
+        T sum = QuackFun::sum(s) + top;
+        s.push(top);
+        return sum;
     }
 
     /**
@@ -47,10 +52,35 @@ namespace QuackFun {
     void scramble(queue<T>& q)
     {
         stack<T> s;
-        // optional: queue<T> q2;
+        queue<T> q2;
 
-        // Your code here
-    }
+        int block_index = 1;
+        int queue_size = 0;
+
+        while (!q.empty()) {
+            if (block_index % 2 == 0) {
+                for (queue_size = 0; (queue_size < block_index && !q.empty()); queue_size++) {
+                    T temp = q.front();
+                    q.pop();
+                    s.push(temp); 
+                }
+                while (queue_size > 0) {
+                    T temp = s.top();
+                    s.pop();
+                    q2.push(temp);
+                    queue_size--;
+                }
+            } else {
+                for (queue_size = 0; (queue_size < block_index && !q.empty()); queue_size++) {
+                    T temp = q.front();
+                    q.pop();
+                    q2.push(temp);
+                }
+            }
+            block_index++;
+        }
+        q = q2;
+     }
 
     /**
      * @return true if the parameter stack and queue contain only elements of
