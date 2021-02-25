@@ -153,6 +153,7 @@ class BinaryTree
     void printLeftToRight(const Node* subRoot) const;
     void mirror(Node *& subRoot);
     void printPaths(const Node* subRoot, vector<string> currPath) const;
+    int sumDistances(const Node* subRoot, int countDist) const;
 
     /**
      * Private helper function for the public insert function.
