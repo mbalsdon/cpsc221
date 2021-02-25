@@ -47,12 +47,20 @@ int BinaryTree<T>::height(const Node* subRoot) const
 template <typename T>
 void BinaryTree<T>::printLeftToRight() const
 {
-    // Your code here
-
+    printLeftToRight(root);
     // Do not remove this line - used for correct print output
     cout << endl;
 }
 
+template <typename T>
+void BinaryTree<T>::printLeftToRight(const Node* subRoot) const
+{
+    if (subRoot != NULL) {
+        printLeftToRight(subRoot->left);
+        cout << to_string(subRoot->elem) << " ";
+        printLeftToRight(subRoot->right);
+    }
+}
 /**
  * Flips the tree over a vertical axis, modifying the tree itself
  * (i.e. not creating a flipped copy).
@@ -60,8 +68,24 @@ void BinaryTree<T>::printLeftToRight() const
 template <typename T>
 void BinaryTree<T>::mirror()
 {
-    // Your code here
+    mirror(root);
+}
 
+template <typename T>
+void BinaryTree<T>::mirror(Node *& subRoot)
+{
+    // empty tree - do nothing
+    if (subRoot == NULL) return;
+    // if not a leaf...
+    if (subRoot->left != NULL || subRoot->right != NULL) {
+    // swap pointers
+    Node* handle = subRoot->left;
+    subRoot->left = subRoot->right;
+    subRoot->right = handle;
+    // go down a level
+    mirror(subRoot->right);
+    mirror(subRoot->left);
+    }
 }
 
 /**
@@ -74,7 +98,31 @@ template <typename T>
 void BinaryTree<T>::printPaths() const
 {
     // Your code here
+    vector<string> path;
+    printPaths(root, path);
+}
 
+template <typename T>
+void BinaryTree<T>::printPaths(const Node* subRoot, vector<string> currPath) const 
+{
+    // empty tree - do nothing
+    if (subRoot == NULL) return;
+    // add this node to path
+    currPath.push_back(to_string(subRoot->elem));
+    // if not a leaf...
+    if (subRoot->left != NULL || subRoot->right != NULL) {
+    // print paths of children
+    printPaths(subRoot->left, currPath);
+    printPaths(subRoot->right, currPath);
+    // otherwise (if leaf...)
+    } else {
+        // print the path
+        cout << "Path: ";
+        for (unsigned i = 0; i < currPath.size(); i++) {
+            cout << currPath.at(i) << " ";
+        }
+        cout << endl;
+    }
 }
 
 /**
