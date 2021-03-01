@@ -7,7 +7,8 @@
 template <class T>
 Deque<T>::Deque(){
 
-/* YOUR CODE HERE! */
+    n1 = 0;
+    n2 = 0;
 
 }
 
@@ -19,9 +20,7 @@ Deque<T>::Deque(){
 template <class T>
 void Deque<T>::pushR(T newItem)
 {
-    /**
-     * @todo Your code here!
-     */
+    data.push_back(newItem);
 }
 
 /**
@@ -35,9 +34,30 @@ void Deque<T>::pushR(T newItem)
 template <class T>
 T Deque<T>::popL()
 {
-    /**
-     * @todo Your code here! 
-     */
+    /* Retrieve and remove leftmost element */
+    T popped = data.at(n1);
+    data.at(n1) = 0;
+    // cout << endl << "popped = " << popped << endl;
+    /* If last element is popped,  */
+    if (data.size() - n1 <= 1) {
+        n1 = 0;
+        data.pop_back();
+        return popped;
+    } else {
+    n1++;
+    }
+    /* Resize deque if empty space >= filled space */
+    if (data.size() - n1 <= n1) {
+        vector<T> new_guy;
+        /* Copy elements of old array to new array */
+        for (int i = n1; i < data.size(); i++) {
+            new_guy.push_back(data.at(i));
+        }
+        n1 = 0;
+        data = new_guy;
+    }
+    // cout << endl << "n1 = " << n1 << endl;
+    return popped;
 }
 /**
  * Removes the object at the right of the Deque, and returns it to the
@@ -48,9 +68,11 @@ T Deque<T>::popL()
 template <class T>
 T Deque<T>::popR()
 {
-    /**
-     * @todo Your code here! You will need to replace the following line.
-     */
+    T popped = data.back();
+    //cout << "data.back = " << popped << " " << data.back() << endl;
+    data.pop_back();
+    //cout << "data.back = " << data.back() << endl;
+    return popped;
 }
 
 /**
@@ -62,9 +84,7 @@ T Deque<T>::popR()
 template <class T>
 T Deque<T>::peekL()
 {
-    /**
-     * @todo Your code here! 
-     */
+    return data.at(n1);
 }
 
 /**
@@ -76,11 +96,8 @@ T Deque<T>::peekL()
 template <class T>
 T Deque<T>::peekR()
 {
-    /**
-     * @todo Your code here! 
-     */
+    return data.back();
 }
-
 /**
  * Determines if the Deque is empty.
  *
@@ -89,7 +106,16 @@ T Deque<T>::peekR()
 template <class T>
 bool Deque<T>::isEmpty() const
 {
-    /**
-     * @todo Your code here! 
-     */
+    return data.empty();
+}
+
+/**
+ * Determines the size of the Deque (Test function)
+ * 
+ * @return size of the Deque.
+ */
+template <class T>
+int Deque<T>::size()
+{
+    return data.size();
 }

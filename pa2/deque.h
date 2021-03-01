@@ -112,10 +112,17 @@ class Deque
      */
     bool isEmpty() const;
 
+    /**
+     * Determines the size of the Deque (Test function)
+     * 
+     * @return size of the Deque.
+     */
+    int size();
+
   private:
     vector<T> data;  /* Store the deque data here! */
-    int n1;  
-    int n2; 
+    int n1;  /* Index of leftmost element */
+    int n2;
 };
 
 #include "deque.cpp"
