@@ -122,7 +122,7 @@ void AVLTree<K, V>::rotateLeftRight(Node*& t)
     // TODO: your code here
     // HINT: you should make use of the other functions defined in this file,
     // instead of manually changing the pointers again
-    rotateLeft(t);
+    rotateLeft(t->left);
     rotateRight(t);
 }
 
@@ -132,7 +132,7 @@ void AVLTree<K, V>::rotateRightLeft(Node*& t)
     *_out << __func__ << endl; // Outputs the rotation name (don't remove this)
 
    // TODO: your code here
-   rotateRight(t);
+   rotateRight(t->right);
    rotateLeft(t);
 }
 
@@ -185,12 +185,10 @@ void AVLTree<K, V>::rebalance(Node*& subtree)
         rotateRight(subtree);
     /* CASE 2: LR is unbalanced */
     } else if (rootbalancefactor > 1 && Lbalancefactor < 0) {
-        rotateLeft(subtree->left);
-        rotateRight(subtree);
+        rotateLeftRight(subtree);
     /* CASE 3: RL is unbalanced */
     } else if (rootbalancefactor < -1 && Rbalancefactor > 0) {
-        rotateRight(subtree->right);
-        rotateLeft(subtree);
+        rotateRightLeft(subtree);
     } else if (rootbalancefactor < -1 && Rbalancefactor < 0) {
         rotateLeft(subtree);
     }
