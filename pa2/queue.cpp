@@ -12,9 +12,7 @@
 template <class T>
 void Queue<T>::enqueue(T newItem)
 {
-    /**
-     * @todo Your code here!
-     */
+    myQueue.pushR(newItem);
 }
 
 /**
@@ -26,10 +24,7 @@ void Queue<T>::enqueue(T newItem)
 template <class T>
 T Queue<T>::dequeue()
 {
-    /**
-     * @todo Your code here! 
-     */
-
+    return myQueue.popL();
 }
 
 
@@ -42,9 +37,7 @@ T Queue<T>::dequeue()
 template <class T>
 T Queue<T>::peek()
 {
-    /**
-     * @todo Your code here! 
-     */
+    return myQueue.peekL();
 }
 
 /**
@@ -55,7 +48,5 @@ T Queue<T>::peek()
 template <class T>
 bool Queue<T>::isEmpty() const
 {
-    /**
-     * @todo Your code here! 
-     */
+    return myQueue.isEmpty();
 }
