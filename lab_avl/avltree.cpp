@@ -60,6 +60,26 @@ template <class K, class V>
 void AVLTree<K, V>::updateHeight(Node* node)
 {
     // TODO: your code here
+    int Lheight = 0;
+    int Rheight = 0;
+    /* avoid segfaults */
+    if (node == NULL) return;
+    if (node->left != NULL) {
+        Lheight = node->left->height;
+    } else {
+        Lheight = 0;
+    }
+    if (node->right != NULL) {
+        Rheight = node->right->height;
+    } else {
+        Rheight = 0;
+    }
+    /* update depth by comparing subtree depths */
+    if (Lheight >= Rheight) {
+        node->height = Lheight + 1;
+    } else {
+        node->height = Rheight + 1;
+    }
 }
 
 template <class K, class V>
@@ -73,6 +93,9 @@ void AVLTree<K, V>::rotateLeft(Node*& t)
     t = newSubRoot;
 
     // TODO: update the heights for t->left and t (in that order)
+    updateHeight(t->left);
+    updateHeight(t);
+
 }
 
 template <class K, class V>
@@ -81,6 +104,14 @@ void AVLTree<K, V>::rotateRight(Node*& t)
     *_out << __func__ << endl; // Outputs the rotation name (don't remove this)
 
     // TODO: your code here
+    Node * newSubRoot = t->left;
+    t->left = newSubRoot->right;
+    newSubRoot->right = t;
+    t = newSubRoot;
+
+    updateHeight(t->right);
+    updateHeight(t);
+
 }
 
 template <class K, class V>
@@ -91,6 +122,8 @@ void AVLTree<K, V>::rotateLeftRight(Node*& t)
     // TODO: your code here
     // HINT: you should make use of the other functions defined in this file,
     // instead of manually changing the pointers again
+    rotateLeft(t);
+    rotateRight(t);
 }
 
 template <class K, class V>
@@ -99,6 +132,8 @@ void AVLTree<K, V>::rotateRightLeft(Node*& t)
     *_out << __func__ << endl; // Outputs the rotation name (don't remove this)
 
    // TODO: your code here
+   rotateRight(t);
+   rotateLeft(t);
 }
 
 template <class K, class V>
@@ -110,7 +145,56 @@ void AVLTree<K, V>::rebalance(Node*& subtree)
       * Case 5: the tree is already balanced. You MUST still correctly update
       * subtree's height 
       */
-
+    int Lheight = 0;
+    int Rheight = 0;
+    int LLheight = 0;
+    int LRheight = 0;
+    int RLheight = 0;
+    int RRheight = 0;
+    int rootbalancefactor = 0;
+    int Lbalancefactor = 0;
+    int Rbalancefactor = 0;
+    /* avoid segfaults */
+    if (subtree == NULL) {
+        updateHeight(subtree);
+        return;
+    }
+    if (subtree->left != NULL) {
+        Lheight = subtree->left->height;
+        if (subtree->left->left != NULL) {
+            LLheight = subtree->left->left->height;
+        }
+        if (subtree->left->right != NULL) {
+            LRheight = subtree->left->right->height;
+        }
+    }
+    if (subtree->right != NULL) {
+        Rheight = subtree->right->height;
+        if (subtree->right->left != NULL) {
+            RLheight = subtree->right->left->height;
+        }
+        if (subtree->right->right != NULL) {
+            RRheight = subtree->right->right->height;
+        }
+    }
+    rootbalancefactor = Lheight - Rheight;
+    Lbalancefactor = LLheight - LRheight;
+    Rbalancefactor = RLheight - RRheight;
+    /* CASE 1: LL is unbalanced */
+    if (rootbalancefactor > 1 && Lbalancefactor > 0) {
+        rotateRight(subtree);
+    /* CASE 2: LR is unbalanced */
+    } else if (rootbalancefactor > 1 && Lbalancefactor < 0) {
+        rotateLeft(subtree->left);
+        rotateRight(subtree);
+    /* CASE 3: RL is unbalanced */
+    } else if (rootbalancefactor < -1 && Rbalancefactor > 0) {
+        rotateRight(subtree->right);
+        rotateLeft(subtree);
+    } else if (rootbalancefactor < -1 && Rbalancefactor < 0) {
+        rotateLeft(subtree);
+    }
+     updateHeight(subtree);
 }
 
 template <class K, class V>
