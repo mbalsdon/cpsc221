@@ -47,10 +47,10 @@ T Deque<T>::popL()
     n1++;
     }
     /* Resize deque if empty space >= filled space */
-    if (data.size() - n1 <= n1) {
+    if ((int) data.size() - n1 <= n1) {
         vector<T> new_guy;
         /* Copy elements of old array to new array */
-        for (int i = n1; i < data.size(); i++) {
+        for (unsigned i = n1; i < data.size(); i++) {
             new_guy.push_back(data.at(i));
         }
         n1 = 0;
