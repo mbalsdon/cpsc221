@@ -7,85 +7,109 @@
 //using namespace cs221util;
 using namespace std;
 
-// TEST_CASE("stack::basic functions","[weight=1][part=stack]"){
-//     //cout << "Testing Stack..." << endl;
-//     Stack<int> intStack;
-//     vector<int> result;
-//     vector<int> expected;
-//     for (int i = 10; i > 0; i--) {
-//         expected.push_back(i);
-//     }
-//     for (int i = 1; i <= 10; i++) {
-//         intStack.push(i);
-//     }
-//     while (!intStack.isEmpty()) {
-//         result.push_back(intStack.pop());
-//     }
-//     REQUIRE( result == expected);
-// }
-
-// TEST_CASE("queue::basic functions","[weight=1][part=queue]"){
-//     Queue<int> intQueue;
-//     vector<int> result;
-//     vector<int> expected;
-//     for (int i = 1; i <= 10; i++) {
-//         expected.push_back(i);
-//     }
-//     for (int i = 1; i <= 10; i++) {
-//         intQueue.enqueue(i);
-//     }
-//     while (!intQueue.isEmpty()) {
-//         result.push_back(intQueue.dequeue());
-//     }
-//     REQUIRE( result == expected);
-// }
-
-TEST_CASE("deque::basic functions","[weight=1][part=deque]") {
-
-    Deque<int> intDeque;
+TEST_CASE("stack::basic functions","[weight=1][part=stack]"){
+    //cout << "Testing Stack..." << endl;
+    Stack<int> intStack;
     vector<int> result;
     vector<int> expected;
+    for (int i = 10; i > 0; i--) {
+        expected.push_back(i);
+    }
+    for (int i = 1; i <= 10; i++) {
+        intStack.push(i);
+    }
+    while (!intStack.isEmpty()) {
+        result.push_back(intStack.pop());
+    }
+    REQUIRE( result == expected);
+}
+
+TEST_CASE("queue::basic functions","[weight=1][part=queue]"){
+    Queue<int> intQueue;
+    vector<int> result;
+    vector<int> expected;
+    for (int i = 1; i <= 10; i++) {
+        expected.push_back(i);
+    }
+    for (int i = 1; i <= 10; i++) {
+        intQueue.enqueue(i);
+    }
+    while (!intQueue.isEmpty()) {
+        result.push_back(intQueue.dequeue());
+    }
+    REQUIRE( result == expected);
+}
+
+TEST_CASE("deque::basic functions","[weight=1][part=deque]") {
+    /* pushR 10 popR 5 popL2 */
+    Deque<int> intDeque0;
+    vector<int> result0;
+    vector<int> expected0;
 
     /* pushR 10 */
+    cout << "peekR 10: ";
     for (int i = 0; i < 10; i++) {
-        intDeque.pushR(i);
+        intDeque0.pushR(i);
+        cout << intDeque0.peekR() << " ";
     }
+    cout << endl;
     /* popR 5 */
-    cout << "popR: ";
+    cout << "popR 5: ";
     for (int j = 0; j < 5; j++) {
-        cout << intDeque.popR() << " ";
+        cout << intDeque0.popR() << " ";
     }
     cout << endl;
     /* popL 2 */
-    cout << "popL: ";
+    cout << "popL 2: ";
     for (int k = 0; k < 2; k++) {
-        cout << intDeque.popL() << " ";
+        cout << intDeque0.popL() << " ";
     }
     cout << endl;
 
     /* Expected: {0, 0, 2, 3, 4} */
-    REQUIRE(intDeque.size() == 5);
-    REQUIRE(intDeque.isEmpty() == 0);
+    REQUIRE(intDeque0.size() == 5);
+    REQUIRE(intDeque0.isEmpty() == 0);
     /* => {3, 4} */
-    if (!intDeque.isEmpty()) {
-        result.push_back(intDeque.popL());
-        REQUIRE(intDeque.size() == 2);
-        REQUIRE(intDeque.isEmpty() == 0);
+    if (!intDeque0.isEmpty()) {
+        result0.push_back(intDeque0.popL());
+        REQUIRE(intDeque0.size() == 2);
+        REQUIRE(intDeque0.isEmpty() == 0);
     }
     /* => {4} */
-    if (!intDeque.isEmpty()) {
-        result.push_back(intDeque.popL());
-        REQUIRE(intDeque.size() == 1);
-        REQUIRE(intDeque.isEmpty() == 0);
+    if (!intDeque0.isEmpty()) {
+        result0.push_back(intDeque0.popL());
+        REQUIRE(intDeque0.size() == 1);
+        REQUIRE(intDeque0.isEmpty() == 0);
     }
     /* => {} */
-    if (!intDeque.isEmpty()) {
-        result.push_back(intDeque.popL());
-        REQUIRE(intDeque.size() == 0);
-        REQUIRE(intDeque.isEmpty() == 1);
+    if (!intDeque0.isEmpty()) {
+        result0.push_back(intDeque0.popL());
+        REQUIRE(intDeque0.size() == 0);
+        REQUIRE(intDeque0.isEmpty() == 1);
     }
-    expected.push_back(2);
-    expected.push_back(3);
-    expected.push_back(4);
-    REQUIRE(result == expected);
+    expected0.push_back(2);
+    expected0.push_back(3);
+    expected0.push_back(4);
+    REQUIRE(result0 == expected0);
+
+    /* pushR 10 popR 10 */
+    Deque<int> intDeque1;
+    vector<int> result1;
+    vector<int> expected1;
+
+    /* pushR 10 */
+    for (int i = 3; i < 13; i++) {
+        intDeque1.pushR(i);
+    }
+    /* popR 10 */
+    int expectedSize = 10;
+    while (!intDeque1.isEmpty()) {
+        REQUIRE(intDeque1.size() == expectedSize);
+        result1.push_back(intDeque1.popR());
+        expectedSize--;
+    }
+    for (int j = 12; j > 2; j--) {
+    expected1.push_back(j);
+    }
+    REQUIRE(result1 == expected1);
 }
