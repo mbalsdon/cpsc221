@@ -68,10 +68,19 @@ T Deque<T>::popL()
 template <class T>
 T Deque<T>::popR()
 {
+    /* Retrieve and remove rightmost element */
     T popped = data.back();
-    //cout << "data.back = " << popped << " " << data.back() << endl;
     data.pop_back();
-    //cout << "data.back = " << data.back() << endl;
+    /* Resize deque if empty space >= filled space */
+    if ((int) data.size() - n1 <= n1) {
+        vector<T> new_guy;
+        /* Copy elements of old array to new array */
+        for (unsigned i = n1; i < data.size(); i++) {
+            new_guy.push_back(data.at(i));
+        }
+        n1 = 0;
+        data = new_guy;
+    }
     return popped;
 }
 
