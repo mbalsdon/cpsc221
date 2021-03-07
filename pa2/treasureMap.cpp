@@ -67,6 +67,7 @@ PNG treasureMap::renderMap() {
         pair<int,int> curr = toexplore.dequeue();
         /* Calculate distance from current pixel to start */
         int currdist = abs(curr.first - start.first + curr.second - start.second);
+        cout << curr.first << " " << start.first << endl;
         /* Get current pixel's cardinal neighbours: {Left, Below, Right, Above} */
         vector<pair<int,int>> neighbours = neighbors(curr);
         /* For each of the current pixel's neighbours... */
@@ -93,6 +94,7 @@ PNG treasureMap::renderMaze() {
 
     /* Copy of base image */
     PNG image = base;
+
     /* Image mask of visited pixels. Outer = x, inner = y */
     vector<bool> vm(image.height());
     vector<vector<bool>> visitedmask(image.width(), vm);
@@ -131,10 +133,10 @@ PNG treasureMap::renderMaze() {
         for (int y = start.second - 3; y < start.second + 4; y++) {
             /* If (x,y) is in bounds */
             if (x >= 0 && y >= 0 && x < (int) image.width() && y < (int) image.height()) {
-                base.getPixel(x, y)->r = 255;
-                base.getPixel(x, y)->g = 0;
-                base.getPixel(x, y)->b = 0;
-                base.getPixel(x, y)->a = 1;
+                image.getPixel(x, y)->r = 255;
+                image.getPixel(x, y)->g = 0;
+                image.getPixel(x, y)->b = 0;
+                image.getPixel(x, y)->a = 1;
             }
         }
 
@@ -146,13 +148,10 @@ bool treasureMap::good(vector<vector<bool>> & v, pair<int,int> curr, pair<int,in
 
     /* next is out of bounds */
     if (next.first < 0 || next.second < 0 || next.first >= (int) base.width() || next.second >= (int) base.height()) return 0;
-
     /* next is visited */
     if (v.at(next.first).at(next.second) == 1) return 0;
-
     /* curr and next's pixel in the maze are different */
-    if (maze.getPixel(next.first, next.second) != maze.getPixel(curr.first, curr.second)) return 0;
-
+    if (*maze.getPixel(next.first, next.second) != *maze.getPixel(curr.first, curr.second)) return 0;
     return 1;
 }
 
