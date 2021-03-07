@@ -91,15 +91,69 @@ PNG treasureMap::renderMap() {
 
 PNG treasureMap::renderMaze() {
 
-    /* YOUR CODE HERE */
+    /* Copy of base image */
+    PNG image = base;
+    /* Image mask of visited pixels. Outer = x, inner = y */
+    vector<bool> vm(image.height());
+    vector<vector<bool>> visitedmask(image.width(), vm);
 
+    /* Queue of pixels to explore */
+    Queue<pair<int,int>> toexplore;
+
+    /* Mark start as visited, darken on image, add to queue */
+    visitedmask.at(start.first).at(start.second) = 1;
+    setGrey(image, start);
+    toexplore.enqueue(start);
+
+    /* While the queue is not empty... */
+    while (!toexplore.isEmpty()) {
+        /* Take a pixel from the queue of pixels to explore */
+        pair<int,int> curr = toexplore.dequeue();
+        /* Get current pixel's cardinal neighbours: {Left, Below, Right, Above} */
+        vector<pair<int,int>> neighbours = neighbors(curr);
+        /* For each of the current pixel's neighbours... */
+        for (int i = 0; i < 4; i++) {
+            pair<int,int> p = neighbours.at(i);
+            /* If neighbour is "good"... */
+            if (good(visitedmask, curr, p)) {
+                /* Mark neighbour as visited */
+                visitedmask.at(p.first).at(p.second) = 1;
+                /* Darken neighbour on image */
+                setGrey(image, p);
+                /* Add neighbour to queue of pixels to explore */
+                toexplore.enqueue(p);
+            }
+        }
+    }
+
+    /* Draw a 7x7 red square at start location */
+    for (int x = start.first - 3; x < start.first + 4; x++) {
+        for (int y = start.second - 3; y < start.second + 4; y++) {
+            /* If (x,y) is in bounds */
+            if (x >= 0 && y >= 0 && x < (int) image.width() && y < (int) image.height()) {
+                base.getPixel(x, y)->r = 255;
+                base.getPixel(x, y)->g = 0;
+                base.getPixel(x, y)->b = 0;
+                base.getPixel(x, y)->a = 1;
+            }
+        }
+
+    }
+    return image;
 }
 
 bool treasureMap::good(vector<vector<bool>> & v, pair<int,int> curr, pair<int,int> next) {
 
-    /* YOUR CODE HERE */
-    return 0;
+    /* next is out of bounds */
+    if (next.first < 0 || next.second < 0 || next.first >= (int) base.width() || next.second >= (int) base.height()) return 0;
 
+    /* next is visited */
+    if (v.at(next.first).at(next.second) == 1) return 0;
+
+    /* curr and next's pixel in the maze are different */
+    if (maze.getPixel(next.first, next.second) != maze.getPixel(curr.first, curr.second)) return 0;
+
+    return 1;
 }
 
 vector<pair<int,int>> treasureMap::neighbors(pair<int,int> curr) {
