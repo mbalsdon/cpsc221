@@ -67,7 +67,6 @@ PNG treasureMap::renderMap() {
         pair<int,int> curr = toexplore.dequeue();
         /* Calculate distance from current pixel to start */
         int currdist = abs(curr.first - start.first + curr.second - start.second);
-        cout << curr.first << " " << start.first << endl;
         /* Get current pixel's cardinal neighbours: {Left, Below, Right, Above} */
         vector<pair<int,int>> neighbours = neighbors(curr);
         /* For each of the current pixel's neighbours... */
