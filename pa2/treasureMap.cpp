@@ -14,9 +14,9 @@ void treasureMap::setGrey(PNG & im, pair<int,int> loc) {
 
     /* Shift RGBs right 2 then left 1, effectively clearing encoded bits and halving values */
     RGBAPixel * selectedpixel = im.getPixel(loc.first, loc.second);
-    selectedpixel->r = (selectedpixel->r >> 2) << 1;
-    selectedpixel->g = (selectedpixel->g >> 2) << 1;
-    selectedpixel->b = (selectedpixel->r >> 2) << 1;
+    selectedpixel->r = 2*(selectedpixel->r/4);
+    selectedpixel->g = 2*(selectedpixel->g/4);
+    selectedpixel->b = 2*(selectedpixel->b/4);
 }
 
 void treasureMap::setLOB(PNG & im, pair<int,int> loc, int d) {
@@ -45,19 +45,19 @@ PNG treasureMap::renderMap() {
     PNG image = base;
 
     /* Image mask of visited pixels. Outer = x, inner = y */
-    vector<bool> vm(image.height());
+    vector<bool> vm(image.height(), false);
     vector<vector<bool>> visitedmask(image.width(), vm);
 
     /* Image mask of pixel distances to start. Outer = x, inner = y */
-    vector<int> sm(image.height());
+    vector<int> sm(image.height(), 0);
     vector<vector<int>> shortestmask(image.width(), sm);
 
     /* Queue of pixels to explore */
     Queue<pair<int,int>> toexplore;
     
     /* Mark start as visited with distance 0, encode start in image, add to queue */
-    visitedmask.at(start.first).at(start.second) = 1;
-    shortestmask.at(start.first).at(start.second) = 0;
+    visitedmask[start.first][start.second] = true;
+    shortestmask[start.first][start.second] = 0;
     setLOB(image, start, 0);
     toexplore.enqueue(start);
 
@@ -65,21 +65,19 @@ PNG treasureMap::renderMap() {
     while (!toexplore.isEmpty()) {
         /* Take a pixel from the queue of pixels to explore */
         pair<int,int> curr = toexplore.dequeue();
-        /* Calculate distance from current pixel to start */
-        int currdist = abs(curr.first - start.first + curr.second - start.second);
         /* Get current pixel's cardinal neighbours: {Left, Below, Right, Above} */
         vector<pair<int,int>> neighbours = neighbors(curr);
         /* For each of the current pixel's neighbours... */
-        for (int i = 0; i < 4; i++) {
-            pair<int,int> p = neighbours.at(i);
+        for (unsigned i = 0; i < 4; i++) {
+            pair<int,int> p = neighbours[i];
             /* If neighbour is "good"... */
             if (good(visitedmask, curr, p)) {
                 /* Mark neighbour as visited */
-                visitedmask.at(p.first).at(p.second) = 1;
+                visitedmask[p.first][p.second] = true;
                 /* Mark neighbour's distance from start */
-                shortestmask.at(p.first).at(p.second) = currdist + 1;
+                shortestmask[p.first][p.second] = shortestmask[curr.first][curr.second] + 1;
                 /* Encode neighbour's distance in image */
-                setLOB(image, p, currdist + 1);
+                setLOB(image, p, shortestmask[p.first][p.second]);
                 /* Add neighbour to queue of pixels to explore */
                 toexplore.enqueue(p);
             }
@@ -95,14 +93,14 @@ PNG treasureMap::renderMaze() {
     PNG image = base;
 
     /* Image mask of visited pixels. Outer = x, inner = y */
-    vector<bool> vm(image.height());
+    vector<bool> vm(image.height(), false);
     vector<vector<bool>> visitedmask(image.width(), vm);
 
     /* Queue of pixels to explore */
     Queue<pair<int,int>> toexplore;
 
     /* Mark start as visited, darken on image, add to queue */
-    visitedmask.at(start.first).at(start.second) = 1;
+    visitedmask[start.first][start.second] = true;
     setGrey(image, start);
     toexplore.enqueue(start);
 
@@ -113,12 +111,12 @@ PNG treasureMap::renderMaze() {
         /* Get current pixel's cardinal neighbours: {Left, Below, Right, Above} */
         vector<pair<int,int>> neighbours = neighbors(curr);
         /* For each of the current pixel's neighbours... */
-        for (int i = 0; i < 4; i++) {
-            pair<int,int> p = neighbours.at(i);
+        for (unsigned i = 0; i < 4; i++) {
+            pair<int,int> p = neighbours[i];
             /* If neighbour is "good"... */
             if (good(visitedmask, curr, p)) {
                 /* Mark neighbour as visited */
-                visitedmask.at(p.first).at(p.second) = 1;
+                visitedmask[p.first][p.second] = true;
                 /* Darken neighbour on image */
                 setGrey(image, p);
                 /* Add neighbour to queue of pixels to explore */
@@ -135,7 +133,6 @@ PNG treasureMap::renderMaze() {
                 image.getPixel(x, y)->r = 255;
                 image.getPixel(x, y)->g = 0;
                 image.getPixel(x, y)->b = 0;
-                image.getPixel(x, y)->a = 1;
             }
         }
 
@@ -145,13 +142,27 @@ PNG treasureMap::renderMaze() {
 
 bool treasureMap::good(vector<vector<bool>> & v, pair<int,int> curr, pair<int,int> next) {
 
-    /* next is out of bounds */
-    if (next.first < 0 || next.second < 0 || next.first >= (int) base.width() || next.second >= (int) base.height()) return 0;
-    /* next is visited */
-    if (v.at(next.first).at(next.second) == 1) return 0;
-    /* curr and next's pixel in the maze are different */
-    if (*maze.getPixel(next.first, next.second) != *maze.getPixel(curr.first, curr.second)) return 0;
-    return 1;
+    int x = next.first;
+    int y = next.second;
+
+    int width = base.width();
+    int height = base.height();
+
+    /* Three parameters to check */
+    bool inbounds = false;
+    bool visited = true;
+    bool equality = false;
+
+    /* Check if in image bounds */
+    inbounds = x >= 0 && x < width && y >= 0 && y < height;
+
+    if (inbounds) {
+        /* Check visit mask */
+        visited = v[x][y];
+        /* Check that next and curr's pixels are equal */
+        equality = *maze.getPixel(curr.first, curr.second) == *maze.getPixel(x,y);
+    }
+    return inbounds && !visited && equality;
 }
 
 vector<pair<int,int>> treasureMap::neighbors(pair<int,int> curr) {
