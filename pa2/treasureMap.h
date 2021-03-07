@@ -124,7 +124,7 @@ private:
 
 // ========= private member variables ================
 
-	pair<int,int> start;  // col,row
+	pair<int,int> start;  // col,row / x,y
 	PNG base; // you can assume that these two images have the same dimensions, and that
 	PNG maze; // position i,j in one corresponds to position i,j in the other.
 
