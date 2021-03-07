@@ -36,8 +36,7 @@ T Deque<T>::popL()
 {
     /* Retrieve and remove leftmost element */
     T popped = data.at(n1);
-    data.at(n1) = 0;
-    // cout << endl << "popped = " << popped << endl;
+    // data.at(n1) = 0; // *** Wasn't behaving with treasureMap
     /* If last element is popped,  */
     if (data.size() - n1 <= 1) {
         n1 = 0;
@@ -56,7 +55,6 @@ T Deque<T>::popL()
         n1 = 0;
         data = new_guy;
     }
-    // cout << endl << "n1 = " << n1 << endl;
     return popped;
 }
 /**
