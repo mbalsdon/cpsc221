@@ -18,25 +18,25 @@ int main()
 {
 
 	PNG maze;
-	maze.readFromFile("images/zdesmaze.png");
-	pair<int,int> start(69,359);
+	maze.readFromFile("images/maze.png");
+	pair<int,int> start(1,1);
 
     PNG base;
-    base.readFromFile("images/zdesbase.png");
+    base.readFromFile("images/sunshine.png");
 
     treasureMap M(base, maze, start);
 
     PNG treasure = M.renderMap();
-	treasure.writeToFile("images/zdesembedded.png");
+	treasure.writeToFile("images/renderMapOutput.png");
     PNG treasuremaze = M.renderMaze();
-	treasuremaze.writeToFile("images/zdesgreyedmaze.png");
+	treasuremaze.writeToFile("images/renderMazeOutput.png");
 
-    decoder dec(treasure,start);
-    PNG soln = dec.renderSolution();
-    PNG solnmaze = dec.renderMaze();
+    // decoder dec(treasure,start);
+    // PNG soln = dec.renderSolution();
+    // PNG solnmaze = dec.renderMaze();
 
-    soln.writeToFile("images/zdessoln.png");
-    solnmaze.writeToFile("images/zdessolnmaze.png");
+    // soln.writeToFile("images/zdessoln.png");
+    // solnmaze.writeToFile("images/zdessolnmaze.png");
 
   return 0;
 }
