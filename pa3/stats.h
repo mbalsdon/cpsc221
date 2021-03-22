@@ -21,7 +21,25 @@ class stats {
   vector< vector< long >> sumsqGreen;
   vector< vector< long >> sumsqBlue;
 
-  unsigned long sumThing(PNG & im, pair<int, int> pos);
+  /**
+   * Helper function for stats constructor.
+   * Calculates and stores sum values in associated vectors corresponding to 
+   * the specifications of the stats constructor.
+   * @param channel is one of r, g, or b
+   * @param im is the image input into the constructor
+   * @param pos is the bottom left coordinate (width-1, height-1) of the image
+   */
+  unsigned long sumThing(unsigned char channel, PNG & im, pair<int, int> pos);
+
+  /**
+   * Helper function for stats constructor.
+   * Calculates and stores sum-squared values in associated vectors corresponding to 
+   * the specifications of the stats constructor.
+   * @param channel is one of r, g, or b
+   * @param im is the image input into the constructor
+   * @param pos is the bottom left coordinate (width-1, height-1) of the image
+   */
+  unsigned long sumSqThing(unsigned char channel, PNG & im, pair<int, int> pos);
 
   /**
    * Returns the sums of all pixel values in one color channel.
@@ -41,11 +59,6 @@ class stats {
    * @param w,h are the width and height of the rectangle
    */
   long getSumSq(char channel, pair<int,int> ul, int w, int h);
-
-  /**
-   *  ... helper func. for constructor
-   */
-  //unsigned long sumColor(unsigned char color, PNG & im, pair<unsigned int, unsigned int> pos);
 
  public:
 
