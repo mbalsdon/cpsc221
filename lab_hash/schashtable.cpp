@@ -82,9 +82,8 @@ void SCHashTable<K, V>::remove(K const& key)
 
         if (it->first == key) {
             pair<K, V> p(key, it->second);
-            table[idx].erase(it); // changed it
+            table[idx].erase(it);
             elems--;
-            if (shouldResize()) resizeTable();
             break;
         }
         it++;
@@ -158,4 +157,8 @@ void SCHashTable<K, V>::resizeTable()
      *
      * @hint Use findPrime()!
      */
+
+    size_t newSize = findPrime(size * 2);
+
+
 }
