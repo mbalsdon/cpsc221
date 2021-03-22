@@ -6,8 +6,10 @@
 #include <utility>
 #include <cmath>
 #include <vector>
+#include <map>
 using namespace std;
 using namespace cs221util;
+using std::map;
 
 class stats {
 
@@ -18,6 +20,8 @@ class stats {
   vector< vector< long >> sumsqRed;
   vector< vector< long >> sumsqGreen;
   vector< vector< long >> sumsqBlue;
+
+  unsigned long sumThing(PNG & im, pair<int, int> pos);
 
   /**
    * Returns the sums of all pixel values in one color channel.
@@ -37,6 +41,11 @@ class stats {
    * @param w,h are the width and height of the rectangle
    */
   long getSumSq(char channel, pair<int,int> ul, int w, int h);
+
+  /**
+   *  ... helper func. for constructor
+   */
+  //unsigned long sumColor(unsigned char color, PNG & im, pair<unsigned int, unsigned int> pos);
 
  public:
 
