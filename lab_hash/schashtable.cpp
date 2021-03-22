@@ -75,8 +75,22 @@ void SCHashTable<K, V>::remove(K const& key)
      * Please read the note in the lab spec about list iterators and the
      * erase() function on std::list!
      */
+    
+    size_t idx = hash(key, size);
+    it = table[idx].begin();
+    while (it != table[idx].end()) {
 
-    (void)key; // prevent warnings... When you implement this function, remove this line.
+        if (it->first == key) {
+            pair<K, V> p(key, it->second);
+            table[idx].erase(it); // changed it
+            elems--;
+            if (shouldResize()) resizeTable();
+            break;
+        }
+        it++;
+    }
+
+    // (void)key; // prevent warnings... When you implement this function, remove this line.
 }
 
 template <class K, class V>
