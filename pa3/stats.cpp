@@ -21,6 +21,27 @@ stats::stats(PNG & im){
         sumsqBlue.push_back(intermediary);
     }
 
+
+    /** sumThing/sumSqThing use the value in the static map of pos' "upper left" recursively,
+     * resulting in diagonals. So, we call it on the bottom and right lines of the grid.
+     * 
+     * Calling sumThing with pos (5, 5):
+     * X 0 0 0 0 0
+     * 0 X 0 0 0 0 
+     * 0 0 X 0 0 0
+     * 0 0 0 X 0 0
+     * 0 0 0 0 X 0
+     * 0 0 0 0 0 X <- (5, 5)
+     * 
+     * Calling sumThing with pos (5, 2):
+     * 0 0 0 X 0 0
+     * 0 0 0 0 X 0
+     * 0 0 0 0 0 X <- (5, 2)
+     * 0 0 0 0 0 0
+     * 0 0 0 0 0 0
+     * 0 0 0 0 0 0
+     * 
+     */
     pair<int, int> pos;
 
     for (unsigned x = 0; x < width; x++) {
