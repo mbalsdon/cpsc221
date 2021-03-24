@@ -69,7 +69,7 @@ stats::stats(PNG & im){
     /* Prints a sum vector */
     for (unsigned b = 0; b < im.height(); b++) {
         for (unsigned a = 0; a < im.width(); a++) {
-            printf("%8lu ", sumsqGreen[a][b]);
+            printf("%8lu ", sumsqBlue[b][a]);
         }
         printf("\n");
     }
@@ -77,13 +77,14 @@ stats::stats(PNG & im){
     /* Prints a color channel */
     for (unsigned b = 0; b < im.height(); b++) {
         for (unsigned a = 0; a < im.width(); a++) {
-            printf("%8u ", (unsigned int) im.getPixel(a, b)->g);
+            printf("%3u ", (unsigned int) im.getPixel(a, b)->b);
         }
         printf("\n");
     }
     printf("\n");
     /* Prints the value of getSum/getSumSq */
-    printf("SUM = %ld\n", getSumSq('g', make_pair(2, 3), 1, 3));
+    printf("SUM = %ld\n", getSumSq('b', make_pair(0, 0), 1, 1));
+    printf("\n");
     /* END OF TEST CODE */
 
 }
@@ -189,17 +190,17 @@ unsigned long stats::sumThing(unsigned char channel, PNG & im, pair<int, int> po
     switch (channel) {
         case 'r':
         redMemo[pos] = result;
-        sumRed[pos.first][pos.second] = result;
+        sumRed[pos.second][pos.first] = result;
         break;
 
         case 'g':
         greenMemo[pos] = result;
-        sumGreen[pos.first][pos.second] = result;
+        sumGreen[pos.second][pos.first] = result;
         break;
 
         case 'b':
         blueMemo[pos] = result;
-        sumBlue[pos.first][pos.second] = result;
+        sumBlue[pos.second][pos.first] = result;
         break;
     }
 
@@ -315,17 +316,17 @@ unsigned long stats::sumSqThing(unsigned char channel, PNG & im, pair<int, int> 
     switch (channel) {
         case 'r':
         redSqMemo[pos] = result;
-        sumsqRed[pos.first][pos.second] = result;
+        sumsqRed[pos.second][pos.first] = result;
         break;
 
         case 'g':
         greenSqMemo[pos] = result;
-        sumsqGreen[pos.first][pos.second] = result;
+        sumsqGreen[pos.second][pos.first] = result;
         break;
 
         case 'b':
         blueSqMemo[pos] = result;
-        sumsqBlue[pos.first][pos.second] = result;
+        sumsqBlue[pos.second][pos.first] = result;
         break;
     }
 
@@ -385,24 +386,24 @@ long stats::getSum(char channel, pair<int,int> ul, int w, int h){
     /* Get sums from vector */
     switch (channel) {
         case 'r':
-        drVal = sumRed[dr.first][dr.second];
-        if (topExists) topVal = sumRed[top.first][top.second];
-        if (leftExists) leftVal = sumRed[left.first][left.second];
-        if (topExists && leftExists) intersectVal = sumRed[intersect.first][intersect.second];
+        drVal = sumRed[dr.second][dr.first];
+        if (topExists) topVal = sumRed[top.second][top.first];
+        if (leftExists) leftVal = sumRed[left.second][left.first];
+        if (topExists && leftExists) intersectVal = sumRed[intersect.second][intersect.first];
         break;
 
         case 'g':
-        drVal = sumGreen[dr.first][dr.second];
-        if (topExists) topVal = sumGreen[top.first][top.second];
-        if (leftExists) leftVal = sumGreen[left.first][left.second];
-        if (topExists && leftExists) intersectVal = sumGreen[intersect.first][intersect.second];
+        drVal = sumGreen[dr.second][dr.first];
+        if (topExists) topVal = sumGreen[top.second][top.first];
+        if (leftExists) leftVal = sumGreen[left.second][left.first];
+        if (topExists && leftExists) intersectVal = sumGreen[intersect.second][intersect.first];
         break;
 
         case 'b':
-        drVal = sumBlue[dr.first][dr.second];
-        if (topExists) topVal = sumBlue[top.first][top.second];
-        if (leftExists) leftVal = sumBlue[left.first][left.second];
-        if (topExists && leftExists) intersectVal = sumBlue[intersect.first][intersect.second];
+        drVal = sumBlue[dr.second][dr.first];
+        if (topExists) topVal = sumBlue[top.second][top.first];
+        if (leftExists) leftVal = sumBlue[left.second][left.first];
+        if (topExists && leftExists) intersectVal = sumBlue[intersect.second][intersect.first];
         break;
     }
 
@@ -445,24 +446,24 @@ long stats::getSumSq(char channel, pair<int,int> ul, int w, int h){
 
     switch (channel) {
         case 'r':
-        drVal = sumsqRed[dr.first][dr.second];
-        if (topExists) topVal = sumsqRed[top.first][top.second];
-        if (leftExists) leftVal = sumsqRed[left.first][left.second];
-        if (topExists && leftExists) intersectVal = sumsqRed[intersect.first][intersect.second];
+        drVal = sumsqRed[dr.second][dr.first];
+        if (topExists) topVal = sumsqRed[top.second][top.first];
+        if (leftExists) leftVal = sumsqRed[left.second][left.first];
+        if (topExists && leftExists) intersectVal = sumsqRed[intersect.second][intersect.first];
         break;
 
         case 'g':
-        drVal = sumsqGreen[dr.first][dr.second];
-        if (topExists) topVal = sumsqGreen[top.first][top.second];
-        if (leftExists) leftVal = sumsqGreen[left.first][left.second];
-        if (topExists && leftExists) intersectVal = sumsqGreen[intersect.first][intersect.second];
+        drVal = sumsqGreen[dr.second][dr.first];
+        if (topExists) topVal = sumsqGreen[top.second][top.first];
+        if (leftExists) leftVal = sumsqGreen[left.second][left.first];
+        if (topExists && leftExists) intersectVal = sumsqGreen[intersect.second][intersect.first];
         break;
 
         case 'b':
-        drVal = sumsqBlue[dr.first][dr.second];
-        if (topExists) topVal = sumsqBlue[top.first][top.second];
-        if (leftExists) leftVal = sumsqBlue[left.first][left.second];
-        if (topExists && leftExists) intersectVal = sumsqBlue[intersect.first][intersect.second];
+        drVal = sumsqBlue[dr.second][dr.first];
+        if (topExists) topVal = sumsqBlue[top.second][top.first];
+        if (leftExists) leftVal = sumsqBlue[left.second][left.first];
+        if (topExists && leftExists) intersectVal = sumsqBlue[intersect.second][intersect.first];
         break;
     }
 
@@ -476,7 +477,8 @@ long stats::getSumSq(char channel, pair<int,int> ul, int w, int h){
 // see written specification for a description of this function.
 double stats::getVar(pair<int,int> ul, int w, int h){
     /* Your code here!! */
-    return 0;
+    
+
 
 }
 		
