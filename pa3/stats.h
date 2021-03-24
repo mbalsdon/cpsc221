@@ -13,33 +13,13 @@ using std::map;
 
 class stats {
 
- private:
+ public: // ***
   vector< vector< long >> sumRed;
   vector< vector< long >> sumGreen;
   vector< vector< long >> sumBlue;
   vector< vector< long >> sumsqRed;
   vector< vector< long >> sumsqGreen;
   vector< vector< long >> sumsqBlue;
-
-  /**
-   * Helper function for stats constructor.
-   * Calculates and stores sum values in associated vectors corresponding to 
-   * the specifications of the stats constructor.
-   * @param channel is one of r, g, or b
-   * @param im is the image input into the constructor
-   * @param pos is the bottom left coordinate (width-1, height-1) of the image
-   */
-  unsigned long sumThing(unsigned char channel, PNG & im, pair<int, int> pos);
-
-  /**
-   * Helper function for stats constructor.
-   * Same idea and implementation as sumThing, except it stores sum-squared values.
-   * 
-   * @param channel is one of r, g, or b
-   * @param im is the image input into the constructor
-   * @param pos is the bottom left coordinate (width-1, height-1) of the image
-   */
-  unsigned long sumSqThing(unsigned char channel, PNG & im, pair<int, int> pos);
 
   /**
    * Returns the sums of all pixel values in one color channel.
@@ -60,7 +40,7 @@ class stats {
    */
   long getSumSq(char channel, pair<int,int> ul, int w, int h);
 
- public:
+ // public // ***
 
   /**
    * Initialize the private vectors so that, for each color, entry 
