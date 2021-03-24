@@ -20,10 +20,28 @@ stats::stats(PNG & im){
         sumsqBlue.push_back(intermediary);
     }
 
-    for (unsigned y = 0; y < height; y++) {
+    /**
+     * Assume x = 3, y = 4.
+     * P represents the sum we are storing (position (3, 4)).
+     * A represents the sum of the rectangle above P. 
+     * L represents the sum of the rectangle to the left of P.
+     * I represents the intersection of rectangles A and L. 
+     * By basic set theory, we know that A ∪ L = A + L - (A ∩ L).
+     * We also have to add the value at P to complete the rectangle.
+     * 
+     * I I A 0 0 0
+     * I I A 0 0 0  There are three other cases:
+     * I I A 0 0 0  Case 1: at (0, 0), the sum is just equal to the value at (0, 0).
+     * L L P 0 0 0  Case 2: at (x, 0), there is no above rectangle, so we just add the left rectangle.
+     * 0 0 0 0 0 0  Case 3: at (0, y), there is no left rectangle, so we just add the above rectangle.
+     * 0 0 0 0 0 0
+     */
 
+    /* Iterate the process going left to right, top to bottom (from (0, 0)) */
+    for (unsigned y = 0; y < height; y++) {
         for (unsigned x = 0; x < width; x++) {
 
+            /* Value of color channel at position */
             long thisRed = im.getPixel(x, y)->r;
             long thisGreen = im.getPixel(x, y)->g;
             long thisBlue = im.getPixel(x, y)->b;

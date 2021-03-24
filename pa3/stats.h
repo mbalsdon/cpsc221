@@ -13,7 +13,7 @@ using std::map;
 
 class stats {
 
- public: // ***
+ private: // ***
   vector< vector< long >> sumRed;
   vector< vector< long >> sumGreen;
   vector< vector< long >> sumBlue;
@@ -40,7 +40,7 @@ class stats {
    */
   long getSumSq(char channel, pair<int,int> ul, int w, int h);
 
- // public // ***
+ public: // ***
 
   /**
    * Initialize the private vectors so that, for each color, entry 
