@@ -1,7 +1,6 @@
 #include "stats.h"
 
 stats::stats(PNG & im){
-
     /* Your code here!! */
 
     unsigned width = im.width();
@@ -20,7 +19,6 @@ stats::stats(PNG & im){
         sumsqGreen.push_back(intermediary);
         sumsqBlue.push_back(intermediary);
     }
-
 
     /** sumThing/sumSqThing use the value in the static map of pos' "upper left" recursively,
      * resulting in diagonals. So, we call it on the bottom and right lines of the grid.
@@ -43,7 +41,8 @@ stats::stats(PNG & im){
      * 
      */
     pair<int, int> pos;
-
+    // *** improvable? border calcs are repeated but recursion would prob have to be redone
+    // could try going from (0,0) outwards.. this codes probably fast enough tho
     for (unsigned x = 0; x < width; x++) {
         pos = make_pair (x, (int) height - 1);
         sumThing('r', im, pos);
@@ -66,22 +65,26 @@ stats::stats(PNG & im){
         sumSqThing('b', im, pos);
     }
 
-    // /* TEST CODE; a = x, b = y */
-    // /* Prints a visual of a vector and the channel values */
-    // for (unsigned b = 0; b < im.height(); b++) {
-    //     for (unsigned a = 0; a < im.width(); a++) {
-    //         printf("%8lu ", sumsqGreen[a][b]);
-    //     }
-    //     printf("\n");
-    // }
-    // printf("\n");
-    // for (unsigned b = 0; b < im.height(); b++) {
-    //     for (unsigned a = 0; a < im.width(); a++) {
-    //         printf("%8u ", (unsigned int) im.getPixel(a, b)->g);
-    //     }
-    //     printf("\n");
-    // }
-    // /* END OF TEST CODE */
+    /* TEST CODE */
+    /* Prints a sum vector */
+    for (unsigned b = 0; b < im.height(); b++) {
+        for (unsigned a = 0; a < im.width(); a++) {
+            printf("%8lu ", sumsqGreen[a][b]);
+        }
+        printf("\n");
+    }
+    printf("\n");
+    /* Prints a color channel */
+    for (unsigned b = 0; b < im.height(); b++) {
+        for (unsigned a = 0; a < im.width(); a++) {
+            printf("%8u ", (unsigned int) im.getPixel(a, b)->g);
+        }
+        printf("\n");
+    }
+    printf("\n");
+    /* Prints the value of getSum/getSumSq */
+    printf("SUM = %ld\n", getSumSq('g', make_pair(2, 3), 1, 3));
+    /* END OF TEST CODE */
 
 }
 
@@ -329,14 +332,144 @@ unsigned long stats::sumSqThing(unsigned char channel, PNG & im, pair<int, int> 
     return result;
 }
 
+/* Doesn't check bounds (based on input); will segfault if access happens outside of the image/vector size. */
 long stats::getSum(char channel, pair<int,int> ul, int w, int h){
     /* Your code here!! */
-    return 0;
+
+    /* "Null" rectangle (no area) */
+    if (w == 0 || h == 0) return 0;
+
+    /**
+     * Assume ul = (1, 2), w = 4, h = 3.
+     * B represents the rectangle. We want to subtract out X's area:
+     * 
+     * X X X X X 0  X is the union of two rectangles, so
+     * X X X X X 0  we subtract their areas and then add
+     * X B B B B 0  the intersection.
+     * X B B B B 0
+     * X B B B B 0  Remember that in reality, we are dealing
+     * 0 0 0 0 0 0  with sums and not areas.
+     */
+
+    /* If the rectangle starts at x = 0, there is no "left" rectangle.
+       If the rectangle starts at y = 0, there is no "top" rectangle.
+       If the rectangle starts at (0, 0), simply return the rectangle. */
+    bool leftExists = ul.first > 0;
+    bool topExists = ul.second > 0;
+
+    /* Position of the bottom right of the rectangle (downRight) */
+    int drX = ul.first + w - 1;
+    int drY = ul.second + h - 1;
+    pair<int, int> dr (drX, drY);
+
+    /* Bottom right of the "above" rectangle we want to subtract */
+    int topX = ul.first + w - 1;
+    int topY = ul.second - 1;
+    pair<int, int> top (topX, topY);
+
+    /* Bottom right of the "left" rectangle we want to subtract */
+    int leftX = ul.first - 1;
+    int leftY = ul.second + h - 1;
+    pair<int, int> left (leftX, leftY);
+
+    /* Bottom right of the "intersected" rectangle we want to subtract */
+    int intersectX = ul.first - 1;
+    int intersectY = ul.second - 1;
+    pair<int, int> intersect (intersectX, intersectY);
+
+    long drVal;
+    long topVal;
+    long leftVal;
+    long intersectVal;
+
+    /* Get sums from vector */
+    switch (channel) {
+        case 'r':
+        drVal = sumRed[dr.first][dr.second];
+        if (topExists) topVal = sumRed[top.first][top.second];
+        if (leftExists) leftVal = sumRed[left.first][left.second];
+        if (topExists && leftExists) intersectVal = sumRed[intersect.first][intersect.second];
+        break;
+
+        case 'g':
+        drVal = sumGreen[dr.first][dr.second];
+        if (topExists) topVal = sumGreen[top.first][top.second];
+        if (leftExists) leftVal = sumGreen[left.first][left.second];
+        if (topExists && leftExists) intersectVal = sumGreen[intersect.first][intersect.second];
+        break;
+
+        case 'b':
+        drVal = sumBlue[dr.first][dr.second];
+        if (topExists) topVal = sumBlue[top.first][top.second];
+        if (leftExists) leftVal = sumBlue[left.first][left.second];
+        if (topExists && leftExists) intersectVal = sumBlue[intersect.first][intersect.second];
+        break;
+    }
+
+    /* Do the thing :poggies: */
+    if (!topExists && !leftExists) return drVal;
+    if (!topExists) return drVal - leftVal;
+    if (!leftExists) return drVal - topVal;
+    return drVal - topVal - leftVal + intersectVal;
 }
 
+/* The exact same thing as getSum except accessing the other three vectors */
 long stats::getSumSq(char channel, pair<int,int> ul, int w, int h){
     /* Your code here!! */
-    return 0;
+
+    if (w == 0 || h == 0) return 0;
+
+    bool leftExists = ul.first > 0;
+    bool topExists = ul.second > 0;
+
+    int drX = ul.first + w - 1;
+    int drY = ul.second + h - 1;
+    pair<int, int> dr (drX, drY);
+
+    int topX = ul.first + w - 1;
+    int topY = ul.second - 1;
+    pair<int, int> top (topX, topY);
+
+    int leftX = ul.first - 1;
+    int leftY = ul.second + h - 1;
+    pair<int, int> left (leftX, leftY);
+
+    int intersectX = ul.first - 1;
+    int intersectY = ul.second - 1;
+    pair<int, int> intersect (intersectX, intersectY);
+
+    long drVal;
+    long topVal;
+    long leftVal;
+    long intersectVal;
+
+    switch (channel) {
+        case 'r':
+        drVal = sumsqRed[dr.first][dr.second];
+        if (topExists) topVal = sumsqRed[top.first][top.second];
+        if (leftExists) leftVal = sumsqRed[left.first][left.second];
+        if (topExists && leftExists) intersectVal = sumsqRed[intersect.first][intersect.second];
+        break;
+
+        case 'g':
+        drVal = sumsqGreen[dr.first][dr.second];
+        if (topExists) topVal = sumsqGreen[top.first][top.second];
+        if (leftExists) leftVal = sumsqGreen[left.first][left.second];
+        if (topExists && leftExists) intersectVal = sumsqGreen[intersect.first][intersect.second];
+        break;
+
+        case 'b':
+        drVal = sumsqBlue[dr.first][dr.second];
+        if (topExists) topVal = sumsqBlue[top.first][top.second];
+        if (leftExists) leftVal = sumsqBlue[left.first][left.second];
+        if (topExists && leftExists) intersectVal = sumsqBlue[intersect.first][intersect.second];
+        break;
+    }
+
+    if (!topExists && !leftExists) return drVal;
+    if (!topExists) return drVal - leftVal;
+    if (!leftExists) return drVal - topVal;
+    return drVal - topVal - leftVal + intersectVal;
 }
 
 // given a rectangle, compute its sum of squared deviations from mean, over all color channels.
