@@ -66,14 +66,25 @@ stats::stats(PNG & im){
     }
 
     /* TEST CODE */
-    /* Prints a sum vector */
-    for (unsigned b = 0; b < im.height(); b++) {
-        for (unsigned a = 0; a < im.width(); a++) {
-            printf("%8lu ", sumsqBlue[b][a]);
-        }
-        printf("\n");
-    }
-    printf("\n");
+
+    // /* Prints a sum vector */
+    // for (unsigned b = 0; b < im.height(); b++) {
+    //     for (unsigned a = 0; a < im.width(); a++) {
+    //         printf("%8lu ", sumGreen[b][a]);
+    //     }
+    //     printf("\n");
+    // }
+    // printf("\n");
+
+    // /* Prints a sum vector */
+    // for (unsigned b = 0; b < im.height(); b++) {
+    //     for (unsigned a = 0; a < im.width(); a++) { // *** rm
+    //         printf("%8lu ", sumsqRed[b][a]);
+    //     }
+    //     printf("\n");
+    // }
+    // printf("\n");
+
     /* Prints a color channel */
     for (unsigned b = 0; b < im.height(); b++) {
         for (unsigned a = 0; a < im.width(); a++) {
@@ -82,9 +93,21 @@ stats::stats(PNG & im){
         printf("\n");
     }
     printf("\n");
-    /* Prints the value of getSum/getSumSq */
-    printf("SUM = %ld\n", getSumSq('b', make_pair(0, 0), 1, 1));
+
+    // /* Prints the value of getSum/getSumSq */
+    // printf("SUM = %ld\n", getSum('b', make_pair(0, 0), 10, 5));
+    // printf("\n");
+
+    /* Prints the value of getAvg */
+    RGBAPixel tAvgPix = getAvg(make_pair(0, 0), 10, 5);
+    printf("AVG = %i %i %i\n", tAvgPix.r, tAvgPix.g, tAvgPix.b);
     printf("\n");
+
+    /* Prints the value of getVar */
+    double tVar = getVar(make_pair(0, 0), 10, 5);
+    printf("VAR = %f\n", tVar);
+    printf("\n");
+
     /* END OF TEST CODE */
 
 }
@@ -478,10 +501,26 @@ long stats::getSumSq(char channel, pair<int,int> ul, int w, int h){
 double stats::getVar(pair<int,int> ul, int w, int h){
     /* Your code here!! */
     
+    /* Variability of a color in a rectangle = 
+       (Sum of color squared over rectangle) - ((Sum of color over rectangle)^2)/(Area of rectangle)
+       Variability of rectangle = (Variability of R) + (Variability of G) + (Variability of B) */
 
+    double varRed = (getSumSq('r', ul, w, h)) - (double) (getSum('r', ul, w, h)*getSum('r', ul, w, h))/(w*h);
+    double varGreen = (getSumSq('g', ul, w, h)) - (double) (getSum('g', ul, w, h)*getSum('g', ul, w, h))/(w*h);
+    double varBlue = (getSumSq('b', ul, w, h)) - (double) (getSum('b', ul, w, h)*getSum('b', ul, w, h))/(w*h);
 
+    return varRed + varGreen + varBlue;
 }
 		
 RGBAPixel stats::getAvg(pair<int,int> ul, int w, int h){
     /* Your code here!! */
+
+    /* Average color of a rectangle = (Sum of color over rectangle)/(Area of rectangle)) */
+    int avgRed = (getSum('r', ul, w, h))/(w*h);
+    int avgGreen = (getSum('g', ul, w, h))/(w*h); // *** TRUNCATES!!!! e.g. 216.94 => 216
+    int avgBlue = (getSum('b', ul, w, h)/(w*h));
+
+    return RGBAPixel(avgRed, avgGreen, avgBlue);
+
+
 }
