@@ -20,331 +20,61 @@ stats::stats(PNG & im){
         sumsqBlue.push_back(intermediary);
     }
 
-    /** sumThing/sumSqThing use the value in the static map of pos' "upper left" recursively,
-     * resulting in diagonals. So, we call it on the bottom and right lines of the grid.
-     * 
-     * Calling sumThing with pos (5, 5):
-     * X 0 0 0 0 0
-     * 0 X 0 0 0 0 
-     * 0 0 X 0 0 0
-     * 0 0 0 X 0 0
-     * 0 0 0 0 X 0
-     * 0 0 0 0 0 X <- (5, 5)
-     * 
-     * Calling sumThing with pos (5, 2):
-     * 0 0 0 X 0 0
-     * 0 0 0 0 X 0
-     * 0 0 0 0 0 X <- (5, 2)
-     * 0 0 0 0 0 0
-     * 0 0 0 0 0 0
-     * 0 0 0 0 0 0
-     * 
-     */
-    pair<int, int> pos;
-    // *** improvable? border calcs are repeated but recursion would prob have to be redone
-    // could try going from (0,0) outwards.. this codes probably fast enough tho
-    for (unsigned x = 0; x < width; x++) {
-        pos = make_pair (x, (int) height - 1);
-        sumThing('r', im, pos);
-        sumThing('g', im, pos);
-        sumThing('b', im, pos);
-
-        sumSqThing('r', im, pos);
-        sumSqThing('g', im, pos);
-        sumSqThing('b', im, pos);
-    }
-
     for (unsigned y = 0; y < height; y++) {
-        pos = make_pair ((int) width - 1, y);
-        sumThing('r', im, pos);
-        sumThing('g', im, pos);
-        sumThing('b', im, pos);
 
-        sumSqThing('r', im, pos);
-        sumSqThing('g', im, pos);
-        sumSqThing('b', im, pos);
-    }
+        for (unsigned x = 0; x < width; x++) {
 
-    /* TEST CODE */
+            long thisRed = im.getPixel(x, y)->r;
+            long thisGreen = im.getPixel(x, y)->g;
+            long thisBlue = im.getPixel(x, y)->b;
 
-    // /* Prints a sum vector */
-    // for (unsigned b = 0; b < im.height(); b++) {
-    //     for (unsigned a = 0; a < im.width(); a++) {
-    //         printf("%8lu ", sumGreen[b][a]);
-    //     }
-    //     printf("\n");
-    // }
-    // printf("\n");
+            /* CASE 1: (0, 0) */
+            if (y == 0 && x == 0) {
+                sumRed[y][x] = thisRed;
+                sumGreen[y][x] = thisGreen;
+                sumBlue[y][x] = thisBlue;
 
-    // /* Prints a color channel */
-    // for (unsigned b = 0; b < im.height(); b++) {
-    //     for (unsigned a = 0; a < im.width(); a++) {
-    //         printf("%3u ", (unsigned int) im.getPixel(a, b)->b);
-    //     }
-    //     printf("\n");
-    // }
-    // printf("\n");
+                sumsqRed[y][x] = thisRed*thisRed;
+                sumsqGreen[y][x] = thisGreen*thisGreen;
+                sumsqBlue[y][x] = thisBlue*thisBlue;
 
-    // /* Prints the value of getSum/getSumSq */
-    // printf("SUM = %ld\n", getSum('b', make_pair(0, 0), 10, 5));
-    // printf("\n");
+            /* CASE 2: (x, 0) */
+            } else if (y == 0) {
+                sumRed[y][x] = sumRed[y][x - 1] + thisRed;
+                sumGreen[y][x] = sumGreen[y][x - 1] + thisGreen;
+                sumBlue[y][x] = sumBlue[y][x - 1] + thisBlue;
 
-    // /* Prints the value of getAvg */
-    // RGBAPixel tAvgPix = getAvg(make_pair(0, 0), 10, 5);
-    // printf("AVG = %i %i %i\n", tAvgPix.r, tAvgPix.g, tAvgPix.b);
-    // printf("\n");
+                sumsqRed[y][x] = sumsqRed[y][x - 1] + thisRed*thisRed;
+                sumsqGreen[y][x] = sumsqGreen[y][x - 1] + thisGreen*thisGreen;
+                sumsqBlue[y][x] = sumsqBlue[y][x - 1] + thisBlue*thisBlue;
 
-    // /* Prints the value of getVar */
-    // double tVar = getVar(make_pair(0, 0), 10, 5);
-    // printf("VAR = %f\n", tVar);
-    // printf("\n");
+            /* CASE 3: (0, y) */
+            } else if (x == 0) {
+                sumRed[y][x] = sumRed[y - 1][x] + thisRed;
+                sumGreen[y][x] = sumGreen[y - 1][x] + thisGreen;
+                sumBlue[y][x] = sumBlue[y - 1][x] + thisBlue;
 
-    /* END OF TEST CODE */
+                sumsqRed[y][x] = sumsqRed[y - 1][x] + thisRed*thisRed;
+                sumsqGreen[y][x] = sumsqGreen[y - 1][x] + thisGreen*thisGreen;
+                sumsqBlue[y][x] = sumsqBlue[y - 1][x] + thisBlue*thisBlue;
+            
+            /* CASE 4: (x, y) */
+            } else {
+                sumRed[y][x] = sumRed[y - 1][x] + sumRed[y][x - 1] - sumRed[y - 1][x - 1] + thisRed;
+                sumGreen[y][x] = sumGreen[y - 1][x] + sumGreen[y][x - 1] - sumGreen[y - 1][x - 1] + thisGreen;
+                sumBlue[y][x] = sumBlue[y - 1][x] + sumBlue[y][x - 1] - sumBlue[y - 1][x - 1] + thisBlue;
 
-}
+                sumsqRed[y][x] = sumsqRed[y - 1][x] + sumsqRed[y][x - 1] - sumsqRed[y - 1][x - 1] + thisRed*thisRed;
+                sumsqGreen[y][x] = sumsqGreen[y - 1][x] + sumsqGreen[y][x - 1] - sumsqGreen[y - 1][x - 1] + thisGreen*thisGreen;
+                sumsqBlue[y][x] = sumsqBlue[y - 1][x] + sumsqBlue[y][x - 1] - sumsqBlue[y - 1][x - 1] + thisBlue*thisBlue;
 
-/* Control flow nightmare. */
-unsigned long stats::sumThing(unsigned char channel, PNG & im, pair<int, int> pos) {
-    
-    if (channel != 'r' && channel != 'g' && channel != 'b') return 0;
+            } // END IF STATEMENT
 
-    static pair<int, int> upLeft (0, 0);
-    unsigned long result = 0;
-
-    /* Sum at (0, 0) is equal to the channel value at (0, 0) */
-    static unsigned char firstRed = im.getPixel(0, 0)->r;
-    static unsigned char firstGreen = im.getPixel(0, 0)->g;
-    static unsigned char firstBlue = im.getPixel(0, 0)->b;
-
-    /* Initialize memo with sum at (0, 0) */
-    static map<pair<int, int>, unsigned long> redMemo = { { upLeft, firstRed } };
-    static map<pair<int, int>, unsigned long> greenMemo = { { upLeft, firstGreen } };
-    static map<pair<int, int>, unsigned long> blueMemo = { { upLeft, firstBlue } };
-
-    /* Search memo to see if sum has already been calculated */
-    auto redLookup = redMemo.find(pos);
-    auto greenLookup = greenMemo.find(pos);
-    auto blueLookup = blueMemo.find(pos);
-
-    bool found;
-
-    switch (channel) {
-        case 'r':
-        found = redLookup != redMemo.end();
-        break;
-
-        case 'g':
-        found = greenLookup != greenMemo.end();
-        break;
-
-        case 'b':
-        found = blueLookup != blueMemo.end();
-        break;
-    }
-
-    /* If sum was already calculated, get it */
-    if (found) {
-        switch (channel) {
-            case 'r':
-            result = redLookup->second;
-            break;
-
-            case 'g':
-            result = greenLookup->second;
-            break;
-
-            case 'b':
-            result = blueLookup->second;
-            break;
-        }
-    } else {
-
-        /* Sum the "borders", the lines horizontal and vertical to pos */
-        for (int x = 0; x < pos.first + 1; x++) {
-            switch (channel) {
-                case 'r':
-                result = result + (unsigned long) im.getPixel(x, pos.second)->r;
-                break;
-
-                case 'g':
-                result = result + (unsigned long) im.getPixel(x, pos.second)->g;
-                break;
-
-                case 'b':
-                result = result + (unsigned long) im.getPixel(x, pos.second)->b;
-                break;
-            }
         } // END X LOOP
 
-        for (int y = 0; y < pos.second; y++) {
-            switch (channel) {
-                case 'r':
-                result = result + (unsigned long) im.getPixel(pos.first, y)->r;
-                break;
+    } // END Y LOOP
 
-                case 'g':
-                result = result + (unsigned long) im.getPixel(pos.first, y)->g;
-                break;
 
-                case 'b':
-                result = result + (unsigned long) im.getPixel(pos.first, y)->b;
-                break;
-            }
-        } // END Y LOOP
-
-        /* Get the sum of the "inner square", a.k.a. (x-1, y-1) where (x, y) are the values of pos */
-        if (pos.first > 0 && pos.second > 0) {
-            pair<int, int> newPos = make_pair(pos.first - 1, pos.second - 1);
-            result = result + sumThing(channel, im, newPos);
-        }
-
-    } // END OUTER IF STATEMENT
-
-    /* Memoize the calculated value, and store it in associated vector */
-    switch (channel) {
-        case 'r':
-        redMemo[pos] = result;
-        sumRed[pos.second][pos.first] = result;
-        break;
-
-        case 'g':
-        greenMemo[pos] = result;
-        sumGreen[pos.second][pos.first] = result;
-        break;
-
-        case 'b':
-        blueMemo[pos] = result;
-        sumBlue[pos.second][pos.first] = result;
-        break;
-    }
-
-    return result;
-}
-
-/* The logic for this is the exact same as sumThing, but it squares color channel values before addition. */
-unsigned long stats::sumSqThing(unsigned char channel, PNG & im, pair<int, int> pos) {
-
-    if (channel != 'r' && channel != 'g' && channel != 'b') return 0;
-
-    static pair<int, int> upLeft (0, 0);
-    unsigned long result = 0;
-    /* Val is used for readability, since there is a lot of squaring going on */
-    unsigned long val = 0;
-
-    /* Sum-squared base cases */
-    val = (unsigned long) im.getPixel(0, 0)->r;
-    static unsigned long firstRedSq = val*val;;
-    val = (unsigned long) im.getPixel(0, 0)->g;
-    static unsigned long firstGreenSq = val*val;
-    val = (unsigned long) im.getPixel(0, 0)->b;
-    static unsigned long firstBlueSq = val*val;
-
-    /* Sum-squared memos */
-    static map<pair<int, int>, unsigned long> redSqMemo = { { upLeft, firstRedSq } };
-    static map<pair<int, int>, unsigned long> greenSqMemo = { { upLeft, firstGreenSq } };
-    static map<pair<int, int>, unsigned long> blueSqMemo = { { upLeft, firstBlueSq } };
-
-    /* Sum-squared lookups */
-    auto redSqLookup = redSqMemo.find(pos);
-    auto greenSqLookup = greenSqMemo.find(pos);
-    auto blueSqLookup = blueSqMemo.find(pos);
-
-    bool found;
-
-    switch (channel) {
-        case 'r':
-        found = redSqLookup != redSqMemo.end();
-        break;
-
-        case 'g':
-        found = greenSqLookup != greenSqMemo.end();
-        break;
-
-        case 'b':
-        found = blueSqLookup != blueSqMemo.end();
-        break;
-    }
-
-    if (found) {
-        switch (channel) {
-            case 'r':
-            result = redSqLookup->second;
-            break;
-
-            case 'g':
-            result = greenSqLookup->second;
-            break;
-
-            case 'b':
-            result = blueSqLookup->second;
-            break;
-        }
-    } else {
-
-        for (int x = 0; x < pos.first + 1; x++) {
-            switch (channel) {
-                case 'r':
-                val = (unsigned long) im.getPixel(x, pos.second)->r;
-                result = result + val*val;
-                break;
-
-                case 'g':
-                val = (unsigned long) im.getPixel(x, pos.second)->g;
-                result = result + val*val;
-                break;
-
-                case 'b':
-                val = (unsigned long) im.getPixel(x, pos.second)->b;
-                result = result + val*val;
-                break;
-            }
-        } // END X LOOP
-
-        for (int y = 0; y < pos.second; y++) {
-            switch (channel) {
-                case 'r':
-                val = (unsigned long) im.getPixel(pos.first, y)->r;
-                result = result + val*val;
-                break;
-
-                case 'g':
-                val = (unsigned long) im.getPixel(pos.first, y)->g;
-                result = result + val*val;
-                break;
-
-                case 'b':
-                val = (unsigned long) im.getPixel(pos.first, y)->b;
-                result = result + val*val;
-                break;
-            }
-        } // END Y LOOP
-
-        if (pos.first > 0 && pos.second > 0) {
-            pair<int, int> newPos = make_pair(pos.first - 1, pos.second - 1);
-            val = sumSqThing(channel, im, newPos);
-            result = result + val;
-        }
-
-    } // END OUTER IF STATEMENT
-
-    switch (channel) {
-        case 'r':
-        redSqMemo[pos] = result;
-        sumsqRed[pos.second][pos.first] = result;
-        break;
-
-        case 'g':
-        greenSqMemo[pos] = result;
-        sumsqGreen[pos.second][pos.first] = result;
-        break;
-
-        case 'b':
-        blueSqMemo[pos] = result;
-        sumsqBlue[pos.second][pos.first] = result;
-        break;
-    }
-
-    return result;
 }
 
 /* Doesn't check bounds (based on input); will segfault if access happens outside of the image/vector size. */
@@ -492,6 +222,8 @@ long stats::getSumSq(char channel, pair<int,int> ul, int w, int h){
 double stats::getVar(pair<int,int> ul, int w, int h){
     /* Your code here!! */
     
+    if (w == 0 || h == 0) return 0;
+
     /* Variability of a color in a rectangle = 
        (Sum of color squared over rectangle) - ((Sum of color over rectangle)^2)/(Area of rectangle)
        Variability of rectangle = (Variability of R) + (Variability of G) + (Variability of B) */
@@ -506,12 +238,12 @@ double stats::getVar(pair<int,int> ul, int w, int h){
 RGBAPixel stats::getAvg(pair<int,int> ul, int w, int h){
     /* Your code here!! */
 
+    if (w == 0 || h == 0) return RGBAPixel(0, 0, 0);
+
     /* Average color of a rectangle = (Sum of color over rectangle)/(Area of rectangle)) */
-    int avgRed = (getSum('r', ul, w, h))/(w*h);
-    int avgGreen = (getSum('g', ul, w, h))/(w*h); // *** TRUNCATES!!!! e.g. 216.94 => 216
-    int avgBlue = (getSum('b', ul, w, h)/(w*h));
+    int avgRed = getSum('r', ul, w, h)/(w*h);
+    int avgGreen = getSum('g', ul, w, h)/(w*h);
+    int avgBlue = getSum('b', ul, w, h)/(w*h);
 
     return RGBAPixel(avgRed, avgGreen, avgBlue);
-
-
 }
