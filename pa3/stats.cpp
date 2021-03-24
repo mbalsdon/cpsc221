@@ -76,37 +76,28 @@ stats::stats(PNG & im){
     // }
     // printf("\n");
 
-    // /* Prints a sum vector */
+    // /* Prints a color channel */
     // for (unsigned b = 0; b < im.height(); b++) {
-    //     for (unsigned a = 0; a < im.width(); a++) { // *** rm
-    //         printf("%8lu ", sumsqRed[b][a]);
+    //     for (unsigned a = 0; a < im.width(); a++) {
+    //         printf("%3u ", (unsigned int) im.getPixel(a, b)->b);
     //     }
     //     printf("\n");
     // }
     // printf("\n");
 
-    /* Prints a color channel */
-    for (unsigned b = 0; b < im.height(); b++) {
-        for (unsigned a = 0; a < im.width(); a++) {
-            printf("%3u ", (unsigned int) im.getPixel(a, b)->b);
-        }
-        printf("\n");
-    }
-    printf("\n");
-
     // /* Prints the value of getSum/getSumSq */
     // printf("SUM = %ld\n", getSum('b', make_pair(0, 0), 10, 5));
     // printf("\n");
 
-    /* Prints the value of getAvg */
-    RGBAPixel tAvgPix = getAvg(make_pair(0, 0), 10, 5);
-    printf("AVG = %i %i %i\n", tAvgPix.r, tAvgPix.g, tAvgPix.b);
-    printf("\n");
+    // /* Prints the value of getAvg */
+    // RGBAPixel tAvgPix = getAvg(make_pair(0, 0), 10, 5);
+    // printf("AVG = %i %i %i\n", tAvgPix.r, tAvgPix.g, tAvgPix.b);
+    // printf("\n");
 
-    /* Prints the value of getVar */
-    double tVar = getVar(make_pair(0, 0), 10, 5);
-    printf("VAR = %f\n", tVar);
-    printf("\n");
+    // /* Prints the value of getVar */
+    // double tVar = getVar(make_pair(0, 0), 10, 5);
+    // printf("VAR = %f\n", tVar);
+    // printf("\n");
 
     /* END OF TEST CODE */
 

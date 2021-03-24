@@ -33,8 +33,8 @@ class stats {
 
   /**
    * Helper function for stats constructor.
-   * Calculates and stores sum-squared values in associated vectors corresponding to 
-   * the specifications of the stats constructor.
+   * Same idea and implementation as sumThing, except it stores sum-squared values.
+   * 
    * @param channel is one of r, g, or b
    * @param im is the image input into the constructor
    * @param pos is the bottom left coordinate (width-1, height-1) of the image
@@ -53,7 +53,7 @@ class stats {
   /**
    * Returns the sums of squares of all pixel values in one color
    * channel.
-   * Useful in computing the variance of a rectangle
+   * Useful in computing the variance of a rectangle.
    * @param channel is one of r, g, or b
    * @param ul is (x,y) of the upper left corner of the rectangle 
    * @param w,h are the width and height of the rectangle
