@@ -27,7 +27,7 @@ using namespace cs221util;
  */
 
 class SQtree {
- private:
+ public: // *** private
 
   /**
    * The Node class is private to the tree class via the principle of
@@ -182,6 +182,43 @@ class SQtree {
   /* END ================ Required private functions (NOT GIVEN) ====== */
 
   /* BEGIN ============== Your personal private functions ============= */
+
+  /**
+   * Private helper function for the constructor. Given a node's position on the image
+   * and the position of a cut, returns the biggest variability that results from the cut.
+   * @param stats Data to calculate variability.
+   * @param ul Upper left point of node's rectangle.
+   * @param cut Position cut to be made. It is the bottom left pixel of the 4 around the cut.
+   * @param width, height are width/height of node's rectangle.
+   * @return Maximum variability resulting from the cut.
+   */
+  double maxVar(stats& stats, pair<int, int>& ul, pair<int, int>& cut, int width, int height);
+
+  // *** comm
+  void renderPixels(PNG & image, Node* root);
+
+  /**
+   * Private helper function for destructor that descends the tree
+   * recursively and deletes all nodes in it.
+   * @param root Root of the tree to delete.
+   */
+  void deleteNode(Node* root);
+
+  /**
+   * Helper function for copy that descends the tree
+   * recursively and copies all nodes in it.
+   * @param root Root of the tree to copy.
+   * @return Pointer to root of copied tree.
+   */
+  Node* ඞ(Node* root);
+
+  /**
+   * Helper function for getSize that descends the tree
+   * recursively and counts all nodes in it.
+   * @param root Root of the tree to get size from.
+   * @return Size of the tree.
+   */
+  int treeSize(Node* root);
 
 
   /* END ================ Your personal private functions ============= */
