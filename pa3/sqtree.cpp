@@ -254,22 +254,25 @@ double SQtree::maxVar(stats& stats, pair<int, int>& ul, pair<int, int>& cut, int
   return maxVar;
 }
 
-// *** comm
+/* Recursively descends the tree and renders the leaves' average colors onto the output image. */
 void SQtree::renderPixels(PNG & image, Node* root) {
   
   if (root == NULL) return;
 
   bool leaf = root->SW == NULL && root->SE == NULL && root->NW == NULL && root->NE == NULL;
 
+  /* Render the node if it's a leaf */
   if (leaf) {
     
+    /* Iterate across the node's rectangle, drawing the average color across it. */
     for (int x = root->upLeft.first; x < root->upLeft.first + root->width; x++) {
       for (int y = root->upLeft.second; y < root->upLeft.second + root->height; y++) {
         RGBAPixel* p = image.getPixel(x, y);
         *p = root->avg;
       }
     }
-
+    
+  /* Descend more if the node isn't a leaf */
   } else {
     renderPixels(image, root->SW);
     renderPixels(image, root->SE);

@@ -27,7 +27,7 @@ using namespace cs221util;
  */
 
 class SQtree {
- public: // *** private
+ private::
 
   /**
    * The Node class is private to the tree class via the principle of
@@ -194,7 +194,12 @@ class SQtree {
    */
   double maxVar(stats& stats, pair<int, int>& ul, pair<int, int>& cut, int width, int height);
 
-  // *** comm
+  /**
+   * Private helper function for render. Draws all of the leaves' average colors onto the
+   * image.
+   * @param image The output image.
+   * @param root The root of the tree to draw.
+   */
   void renderPixels(PNG & image, Node* root);
 
   /**
